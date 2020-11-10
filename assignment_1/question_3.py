@@ -20,8 +20,10 @@ def recurrence(a):
 
 def format_and_print(sequence, errors):
     for i in range(len(sequence)):
-        print('a_{} = {:.16f}; Relative error = {:.16f}'.format(
-            i, sequence[i], errors[i]))
+        # print('a_{} = {:.16f}; Relative error = {:.16f}'.format(
+        #     i, sequence[i], errors[i]))
+        print('a_{} & {: .16f} & {: .16f} \\\\'.format(
+            i + 1, sequence[i], errors[i]))
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 def main():
     # defining the functions for iteratively calculating terms of p
     f_1 = lambda p: p * (1 + (7 - p**5) / (p**2))**3
-    f_2 = lambda p: p - ((p**5 - 7) / (p**2))**3
+    f_2 = lambda p: p - ((p**5 - 7) / (p**2))
     f_3 = lambda p: p - ((p**5 - 7) / (5 * p**4))
     f_4 = lambda p: p - ((p**5 - 7) / (12))
 

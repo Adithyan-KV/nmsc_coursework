@@ -9,9 +9,12 @@ def main():
     x_estimate = np.array([[-2], [-2]])
     b = np.array([[2], [-8]])
     x_final, errors, x_values = solve_msd(A, x_estimate, b, 0.001)
-    print(x_final)
-    # plt.plot(errors)
-    # plt.show()
+    print(f'x value:\n{x_final}')
+    plt.plot(errors)
+    plt.title('Error vs number of iterations')
+    plt.xlabel('iteration')
+    plt.ylabel('Error')
+    plt.show()
     plot_objective_function(A, b, x_values)
 
 
@@ -65,18 +68,19 @@ def plot_objective_function(A, b, x_values):
         f_descent[index] = get_objective_function_value(A, b, x_value)
     fig = plt.figure()
     ax = fig.add_subplot(121, projection='3d')
+    ax.set_title('Objective function plot')
     # surface plot
     surface = ax.plot_surface(X, Y, f_values, cmap='coolwarm')
     fig.colorbar(surface, shrink=0.5, aspect=10)
     # plt.show()
 
     # contour plot with descent path for better visualization
-    # fig_2 = plt.figure()
     ax_2 = fig.add_subplot(122, projection='3d')
-    ax_2.contour(X, Y, f_values, cmap='coolwarm')
+    ax_2.set_title('Contour plot of objective function and descent path')
+    contour = ax_2.contour(X, Y, f_values, cmap='coolwarm')
     ax_2.plot(x_descent, y_descent, f_descent, color='red')
     ax_2.scatter(x_descent, y_descent, f_descent, color='red')
-    # fig_2.colorbar(surface, shrink=0.5, aspect=10)
+    fig.colorbar(contour, shrink=0.5, aspect=10)
     plt.show()
 
 

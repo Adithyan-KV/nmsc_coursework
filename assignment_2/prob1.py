@@ -8,11 +8,11 @@ def main():
                   [2, 6]])
     x_estimate = np.array([[-2], [-2]])
     b = np.array([[2], [-8]])
-    x_final, errors = solve_msd(A, x_estimate, b, 0.001)
+    x_final, errors, x_values = solve_msd(A, x_estimate, b, 0.001)
     print(x_final)
-    plt.plot(errors)
-    plt.show()
-    plot_objective_function(A, b)
+    # plt.plot(errors)
+    # plt.show()
+    plot_objective_function(A, b, x_values)
 
 
 def solve_msd(A, x, b, error_threshold):
@@ -21,12 +21,13 @@ def solve_msd(A, x, b, error_threshold):
     r = b - np.matmul(A, x)
     delta = np.matmul(np.transpose(r), r)
     errors = []
+    x_values = []
 
     for i in range(max_iterations):
         # if the error is less than threshold return results
         if delta[0, 0] < error_threshold:
             print(f'Converged in {i} iterations')
-            return(x, errors)
+            return(x, errors, x_values)
         q = np.matmul(A, r)
         alpha = delta / np.matmul(np.transpose(r), q)
         x = x + alpha * r
@@ -37,31 +38,51 @@ def solve_msd(A, x, b, error_threshold):
         else:
             r = r - alpha * q
         delta = np.matmul(np.transpose(r), r)
+
+        # for plotting purposes
+        x_values.append(x)
         errors.append(delta[0, 0])
     raise Exception("Maximum iterations exceeded with no convergence")
 
 
-def plot_objective_function(A, b):
+def plot_objective_function(A, b, x_values):
     x = np.arange(-10, 10, 0.1)
     y = np.arange(-10, 10, 0.1)
     X, Y = np.meshgrid(x, y)
     f_values = np.zeros((len(x), len(y)))
+    x_descent = np.zeros(len(x_values))
+    y_descent = np.zeros_like(x_descent)
+    f_descent = np.zeros_like(x_descent)
     for i in range(len(x)):
         for j in range(len(y)):
             x_vec = np.array([x[i], y[j]])
             f = get_objective_function_value(A, b, x_vec)
             # print(f)
             f_values[i, j] = f
+    for index, x_value in enumerate(x_values):
+        x_descent[index] = x_value[0]
+        y_descent[index] = x_value[1]
+        f_descent[index] = get_objective_function_value(A, b, x_value)
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    surface = ax.plot_surface(X, Y, f_values, cmap='rainbow')
+    ax = fig.add_subplot(121, projection='3d')
+    # surface plot
+    surface = ax.plot_surface(X, Y, f_values, cmap='coolwarm')
     fig.colorbar(surface, shrink=0.5, aspect=10)
+    # plt.show()
+
+    # contour plot with descent path for better visualization
+    # fig_2 = plt.figure()
+    ax_2 = fig.add_subplot(122, projection='3d')
+    ax_2.contour(X, Y, f_values, cmap='coolwarm')
+    ax_2.plot(x_descent, y_descent, f_descent, color='red')
+    ax_2.scatter(x_descent, y_descent, f_descent, color='red')
+    # fig_2.colorbar(surface, shrink=0.5, aspect=10)
     plt.show()
 
 
 def get_objective_function_value(A, b, x):
     term_1 = np.matmul(np.transpose(x), np.matmul(A, x))
-    term_2 = np.matmul(np.transpose(x), x)
+    term_2 = np.matmul(np.transpose(b), x)
     f = 1 / 2 * term_1 + term_2
     return f
 

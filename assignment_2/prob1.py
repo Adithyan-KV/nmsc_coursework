@@ -9,8 +9,10 @@ def main():
     x_estimate = np.array([[-2], [-2]])
     b = np.array([[2], [-8]])
     x_final, errors, x_values = solve_msd(A, x_estimate, b, 0.001)
+
+    # plot error
     print(f'x value:\n{x_final}')
-    plt.plot(errors)
+    plt.plot(errors, 'o-')
     plt.title('Error vs number of iterations')
     plt.xlabel('iteration')
     plt.ylabel('Error')

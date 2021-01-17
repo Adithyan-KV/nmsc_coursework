@@ -20,8 +20,7 @@ def main():
 def integrate_by_adaptive_quadrature(function, lower_lim, upper_lim, tolerance):
     S_tot = integrate_by_simpsons(function, lower_lim, upper_lim)
 
-    I = integrate_two_halves(
-        function, lower_lim, upper_lim, S_tot, tolerance)
+    I = integrate_two_halves(function, lower_lim, upper_lim, S_tot, tolerance)
 
     return I
 

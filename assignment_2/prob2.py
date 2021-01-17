@@ -18,10 +18,10 @@ def main():
 
 
 def integrate_by_adaptive_quadrature(function, lower_lim, upper_lim, tolerance):
-    midpoint, S_tot = integrate_by_simpsons(function, lower_lim, upper_lim)
+    S_tot = integrate_by_simpsons(function, lower_lim, upper_lim)
 
     I = integrate_two_halves(
-        function, lower_lim, upper_lim, midpoint, S_tot, tolerance)
+        function, lower_lim, upper_lim, S_tot, tolerance)
 
     return I
 
@@ -29,7 +29,7 @@ def integrate_by_adaptive_quadrature(function, lower_lim, upper_lim, tolerance):
 def integrate_by_simpsons(function, lower_limit, upper_limit):
 
     global function_call_count
-    function_call_count += 2
+    function_call_count += 1
 
     fa = function(lower_limit)
     fb = function(upper_limit)
@@ -39,13 +39,14 @@ def integrate_by_simpsons(function, lower_limit, upper_limit):
 
     S = h * (fa + 4 * fm + fb) / 3
 
-    return (midpoint, S)
+    return S
 
 
-def integrate_two_halves(function, lower_limit, upper_limit, midpoint, S_previous, tolerance):
+def integrate_two_halves(function, lower_limit, upper_limit, S_previous, tolerance):
 
-    left_mid, S_left = integrate_by_simpsons(function, lower_limit, midpoint)
-    right_mid, S_right = integrate_by_simpsons(function, midpoint, upper_limit)
+    midpoint = (lower_limit + upper_limit) / 2
+    S_left = integrate_by_simpsons(function, lower_limit, midpoint)
+    S_right = integrate_by_simpsons(function, midpoint, upper_limit)
 
     error = S_left + S_right - S_previous
 
@@ -53,9 +54,9 @@ def integrate_two_halves(function, lower_limit, upper_limit, midpoint, S_previou
         return S_left + S_right + error / 15
     else:
         return (integrate_two_halves(function, lower_limit, midpoint,
-                                     left_mid, S_left, tolerance / 2)
+                                     S_left, tolerance / 2)
                 + integrate_two_halves(function, midpoint, upper_limit,
-                                       right_mid, S_right, tolerance / 2))
+                                       S_right, tolerance / 2))
 
 
 if __name__ == "__main__":

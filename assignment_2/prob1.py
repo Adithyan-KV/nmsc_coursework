@@ -24,29 +24,29 @@ def solve_msd(A, x, b, error_threshold):
     max_iterations = 1000
 
     r = b - np.matmul(A, x)
-    delta = np.matmul(np.transpose(r), r)
+    error = float('inf')
     errors = []
     x_values = []
 
     for i in range(max_iterations):
         # if the error is less than threshold return results
-        if delta[0, 0] < error_threshold:
+        if error < error_threshold:
             print(f'Converged in {i} iterations')
             return(x, errors, x_values)
         q = np.matmul(A, r)
-        alpha = delta / np.matmul(np.transpose(r), q)
-        x = x + alpha * r
+        alpha = np.matmul(np.transpose(r), r) / np.matmul(np.transpose(r), q)
+        x_new = x + alpha * r
+        error = np.sum((x_new - x)**2)
+        x = x_new
 
-        # recompute the residual every 50 iterations to avoid numerical error
-        if i % 50 == 0:
+        if (i % 50 == 0):
             r = b - np.matmul(A, x)
         else:
             r = r - alpha * q
-        delta = np.matmul(np.transpose(r), r)
 
         # for plotting purposes
-        x_values.append(x)
-        errors.append(delta[0, 0])
+        x_values.append(x_new)
+        errors.append(error)
     raise Exception("Maximum iterations exceeded with no convergence")
 
 
